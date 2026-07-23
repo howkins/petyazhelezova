@@ -1,4 +1,4 @@
 User-agent: *
-Allow: /
+Disallow: /
 
-Sitemap: https://petya-zhelezova.vercel.app/sitemap.xml
+Sitemap: https://petyazhelezova.bg/sitemap.xml
