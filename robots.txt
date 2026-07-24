@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: /
+Allow: /
 
-Sitemap: https://petyazhelezova.bg/sitemap.xml
+Sitemap: https://www.petyazhelezova.bg/sitemap.xml
