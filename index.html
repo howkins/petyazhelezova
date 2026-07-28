@@ -103,7 +103,6 @@
   a:hover { opacity: 0.75; }
   section[id] { scroll-margin-top: 96px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes reviewfill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes heartbeat {
     0%, 100% { transform: scale(1); box-shadow: 0 6px 18px rgba(240,160,139,0.32); }
     12% { transform: scale(1.09); box-shadow: 0 8px 24px rgba(240,160,139,0.5); }
@@ -114,9 +113,13 @@
   .book-cta { animation: heartbeat 2.4s ease-in-out infinite; }
   .book-cta:hover { animation-play-state: paused; opacity: 1 !important; transform: scale(1.05); }
   .nav-a { position: relative; z-index: 1; color: #5D5D57; padding: 8px 14px; border-radius: 999px; font-weight: 500; transition: color 0.3s; }
-  .rev-track { transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); }
-  .rev-dot { width: 46px; height: 6px; border-radius: 999px; background: #E4DCCF; overflow: hidden; cursor: pointer; }
-  .rev-dot > i { display: block; width: 100%; height: 100%; background: #6E9585; transform-origin: left; }
+  .rev-viewport { height: 700px; overflow: hidden; flex: 1; min-width: 0; touch-action: pan-y; cursor: grab; }
+  .rev-track { display: flex; flex-direction: column; gap: 22px; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+  .rev-card { flex: 0 0 auto; overflow: hidden; }
+  .rev-dragging .rev-track { transition: none; }
+  .rev-dragging, .rev-dragging .rev-viewport { cursor: grabbing; user-select: none; }
+  .rev-dot { width: 8px; height: 8px; border-radius: 50%; background: #D9D2C6; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+  .rev-dot.active { background: #6E9585; transform: scale(1.45); }
   @media (max-width: 880px) {
     .nav-links { display: none !important; }
     .nav-cta-mobile { display: inline-block !important; }
@@ -130,13 +133,15 @@
     .resp-grid-3 { grid-template-columns: 1fr !important; }
     .resp-exp-card { padding: 34px 26px !important; }
     .resp-exp { grid-template-columns: 1fr !important; gap: 28px !important; }
-    .resp-rev { grid-template-columns: 1fr !important; }
+    .rev-viewport { height: 720px; }
+    .resp-rev-wrap { max-width: 100% !important; }
     .resp-contact { grid-template-columns: 1fr !important; gap: 40px !important; padding: 56px 22px !important; }
     .sec-h2 { font-size: 32px !important; }
   }
   @media (max-width: 520px) {
     .resp-hero h1 { font-size: 33px !important; }
     .resp-exp-card { padding: 28px 20px !important; }
+    .rev-viewport { height: 780px; }
   }
 </style>
 </head>
@@ -276,11 +281,11 @@
         <div style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #9CBCAC; font-weight: 700; margin-bottom: 14px;">Отзиви</div>
         <h2 class="sec-h2" style="font-size: 40px; line-height: 1.15; margin: 0 0 14px; font-weight: 700; color: #3E3E3C;">Какво казват родителите</h2>
       </div>
-      <div style="position: relative;">
-        <div style="overflow: hidden; padding: 10px 0;">
-          <div id="revTrack" class="rev-track" style="display: flex; gap: 22px;"></div>
+      <div class="resp-rev-wrap" style="position: relative; max-width: 760px; margin: 0 auto; padding: 10px 0; display: flex; gap: 20px; align-items: stretch;">
+        <div class="rev-viewport">
+          <div id="revTrack" class="rev-track"></div>
         </div>
-        <div id="revDots" style="display: flex; align-items: center; justify-content: center; margin-top: 36px; gap: 10px;"></div>
+        <div id="revDots" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;"></div>
       </div>
     </section>
 
@@ -397,18 +402,17 @@
     { quote: "Стана спокоен и кооперативен, отпусна се и заговори свободно.", initial: "Б", name: "Боян", role: "родител · ~1,5 години работа" }
   ];
   (function () {
-    var PER = 3, DUR = 15000;
+    var PER = 3, DUR = 5000, GAP = 22, TRANS = 550;
     var track = document.getElementById("revTrack");
     var dotsWrap = document.getElementById("revDots");
-    var pageCount = Math.max(1, Math.ceil(REVIEWS.length / PER));
-    var page = 0, timer = null;
+    var vp = document.querySelector(".rev-viewport");
+    var wrap = document.querySelector(".resp-rev-wrap");
+    var N = REVIEWS.length;
+    var index = 0, timer = null, cardH = 0;
 
-    for (var p = 0; p < pageCount; p++) {
-      var slide = document.createElement("div");
-      slide.className = "resp-rev";
-      slide.style.cssText = "flex:0 0 100%;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;";
-      REVIEWS.slice(p * PER, p * PER + PER).forEach(function (r) {
+    function makeCard(r) {
         var card = document.createElement("div");
+        card.className = "rev-card";
         card.style.cssText = "background:#fff;border-radius:22px;padding:30px;box-shadow:2px 2px 2px 0 rgba(60,50,40,0.06);display:flex;flex-direction:column;gap:18px;";
         card.innerHTML = '<div style="color:#F0A08B;font-size:18px;letter-spacing:2px;">★★★★★</div>' +
           '<p style="font-size:15px;line-height:1.65;color:#55554F;margin:0;flex:1;"></p>' +
@@ -417,49 +421,86 @@
         card.querySelector(".r-init").textContent = r.initial;
         card.querySelector(".r-name").textContent = r.name;
         card.querySelector(".r-role").textContent = r.role;
-        slide.appendChild(card);
-      });
-      track.appendChild(slide);
+        return card;
     }
 
+    // All cards individually, then clones of the first PER for a seamless loop.
+    REVIEWS.forEach(function (r) { track.appendChild(makeCard(r)); });
+    for (var c = 0; c < PER; c++) track.appendChild(makeCard(REVIEWS[c % N]));
+
     var dots = [];
-    for (var i = 0; i < pageCount; i++) {
+    for (var i = 0; i < N; i++) {
       var d = document.createElement("div");
       d.className = "rev-dot";
-      d.title = "Страница " + (i + 1);
-      d.innerHTML = "<i></i>";
+      d.title = "Отзив " + (i + 1);
       (function (idx) { d.addEventListener("click", function () { go(idx); }); })(i);
       dotsWrap.appendChild(d);
       dots.push(d);
     }
-    if (pageCount <= 1) dotsWrap.style.display = "none";
+    if (N <= PER) dotsWrap.style.display = "none";
 
-    function paintDots() {
-      dots.forEach(function (d, i) {
-        var fill = d.querySelector("i");
-        fill.style.animation = "none";
-        if (i < page) { fill.style.transform = "scaleX(1)"; }
-        else if (i === page) {
-          fill.style.transform = "scaleX(0)";
-          void fill.offsetWidth;
-          fill.style.animation = "reviewfill " + DUR + "ms linear forwards";
-        } else { fill.style.transform = "scaleX(0)"; }
-      });
+    function layout() {
+      cardH = (vp.clientHeight - (PER - 1) * GAP) / PER;
+      Array.prototype.forEach.call(track.children, function (el) { el.style.height = cardH + "px"; });
     }
-    function render() {
-      track.style.transform = "translateX(calc(" + (-page) + " * (100% + 22px)))";
+    function paintDots() {
+      var active = ((index % N) + N) % N;
+      dots.forEach(function (d, i) { d.classList.toggle("active", i === active); });
+    }
+    function render(animate) {
+      track.style.transition = animate ? "" : "none";
+      track.style.transform = "translateY(" + (-index * (cardH + GAP)) + "px)";
+      if (!animate) void track.offsetHeight; // flush so the next transition applies cleanly
       paintDots();
     }
+    function step() {
+      index++;
+      render(true);
+      if (index >= N) {
+        // Slid onto the cloned first cards — after the animation, snap back to the real start.
+        setTimeout(function () { if (index >= N) { index = 0; render(false); } }, TRANS + 30);
+      }
+      schedule();
+    }
     function go(i) {
-      page = ((i % pageCount) + pageCount) % pageCount;
-      render();
+      index = ((i % N) + N) % N;
+      render(true);
       schedule();
     }
     function schedule() {
       clearTimeout(timer);
-      if (pageCount > 1) timer = setTimeout(function () { go(page + 1); }, DUR);
+      if (N > PER) timer = setTimeout(step, DUR);
     }
-    render();
+
+    // ---- Mouse / touch drag (vertical) ----
+    var startY = 0, dragging = false, moved = 0;
+    vp.addEventListener("pointerdown", function (e) {
+      if (N <= PER) return;
+      dragging = true; startY = e.clientY; moved = 0;
+      clearTimeout(timer);
+      wrap.classList.add("rev-dragging");
+      render(false);
+      vp.setPointerCapture(e.pointerId);
+    });
+    vp.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      moved = e.clientY - startY;
+      track.style.transform = "translateY(" + (-index * (cardH + GAP) + moved) + "px)";
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      wrap.classList.remove("rev-dragging");
+      var steps = Math.round(-moved / (cardH + GAP));
+      if (steps) go(index + steps);
+      else { render(true); schedule(); }
+    }
+    vp.addEventListener("pointerup", endDrag);
+    vp.addEventListener("pointercancel", endDrag);
+
+    window.addEventListener("resize", function () { layout(); render(false); });
+    layout();
+    render(false);
     schedule();
   })();
 
