@@ -133,7 +133,7 @@
     .resp-grid-3 { grid-template-columns: 1fr !important; }
     .resp-exp-card { padding: 34px 26px !important; }
     .resp-exp { grid-template-columns: 1fr !important; gap: 28px !important; }
-    .rev-viewport { height: 720px; }
+    .rev-viewport { height: 600px; }
     .resp-rev-wrap { max-width: 100% !important; }
     .resp-contact { grid-template-columns: 1fr !important; gap: 40px !important; padding: 56px 22px !important; }
     .sec-h2 { font-size: 32px !important; }
@@ -141,7 +141,7 @@
   @media (max-width: 520px) {
     .resp-hero h1 { font-size: 33px !important; }
     .resp-exp-card { padding: 28px 20px !important; }
-    .rev-viewport { height: 780px; }
+    .rev-viewport { height: 640px; }
   }
 </style>
 </head>
@@ -402,7 +402,7 @@
     { quote: "Стана спокоен и кооперативен, отпусна се и заговори свободно.", initial: "Б", name: "Боян", role: "родител · ~1,5 години работа" }
   ];
   (function () {
-    var PER = 3, DUR = 5000, GAP = 22, TRANS = 550;
+    var MAXPER = 3, PER = 3, DUR = 5000, GAP = 22, TRANS = 550;
     var track = document.getElementById("revTrack");
     var dotsWrap = document.getElementById("revDots");
     var vp = document.querySelector(".rev-viewport");
@@ -426,7 +426,7 @@
 
     // All cards individually, then clones of the first PER for a seamless loop.
     REVIEWS.forEach(function (r) { track.appendChild(makeCard(r)); });
-    for (var c = 0; c < PER; c++) track.appendChild(makeCard(REVIEWS[c % N]));
+    for (var c = 0; c < MAXPER; c++) track.appendChild(makeCard(REVIEWS[c % N]));
 
     var dots = [];
     for (var i = 0; i < N; i++) {
@@ -439,7 +439,9 @@
     }
     if (N <= PER) dotsWrap.style.display = "none";
 
+    function getPER() { return window.innerWidth <= 880 ? 2 : 3; }
     function layout() {
+      PER = getPER();
       cardH = (vp.clientHeight - (PER - 1) * GAP) / PER;
       Array.prototype.forEach.call(track.children, function (el) { el.style.height = cardH + "px"; });
     }
