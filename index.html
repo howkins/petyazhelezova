@@ -131,6 +131,7 @@
   .book-cta { animation: heartbeat 2.4s ease-in-out infinite; }
   .book-cta:hover { animation-play-state: paused; opacity: 1 !important; transform: scale(1.05); }
   .nav-a { position: relative; z-index: 1; color: #5D5D57; padding: 8px 14px; border-radius: 999px; font-weight: 500; transition: color 0.3s; }
+  .nav-tel:hover { background: #6E9585; color: #fff !important; }
   .rev-viewport { height: 700px; overflow: hidden; flex: 1; min-width: 0; touch-action: pan-y; cursor: grab; }
   .rev-track { display: flex; flex-direction: column; gap: 22px; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
   .rev-card { flex: 0 0 auto; overflow: hidden; }
@@ -140,6 +141,7 @@
   .rev-dot.active { background: #6E9585; transform: scale(1.45); }
   @media (max-width: 880px) {
     .nav-links { display: none !important; }
+    .nav-mobile-actions { display: flex !important; }
     .nav-cta-mobile { display: inline-block !important; }
     .resp-container { padding-left: 22px !important; padding-right: 22px !important; }
     .resp-hero { grid-template-columns: 1fr !important; gap: 8px !important; padding: 40px 0 52px !important; }
@@ -179,9 +181,13 @@
           <a href="#reviews" class="nav-a" data-nav="reviews">Отзиви</a>
           <a href="#contact" class="nav-a" data-nav="contact">Контакти</a>
         </div>
-        <a href="#contact" class="book-cta" style="background: #F0A08B; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600;">Запази час</a>
+        <a href="tel:+359899140742" class="nav-tel" data-call="nav-desktop" style="display: inline-flex; align-items: center; gap: 8px; color: #6E9585; border: 1.5px solid #6E9585; padding: 9px 18px; border-radius: 999px; font-weight: 600; transition: background 0.3s, color 0.3s;">📞 +359 89 914 0742</a>
+        <a href="#contact" class="book-cta" data-cta="nav-desktop" style="background: #F0A08B; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600;">Запази час</a>
       </div>
-      <a href="#contact" class="book-cta nav-cta-mobile" style="background: #F0A08B; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600; display: none;">Запази час</a>
+      <div class="nav-mobile-actions" style="display: none; align-items: center; gap: 10px;">
+        <a href="tel:+359899140742" class="nav-tel-mobile" data-call="nav-mobile" aria-label="Обади се" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #6E9585; color: #fff; font-size: 19px;">📞</a>
+        <a href="#contact" class="book-cta nav-cta-mobile" data-cta="nav-mobile" style="background: #F0A08B; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600; display: none;">Запази час</a>
+      </div>
     </div>
   </nav>
 
@@ -195,7 +201,7 @@
         <h1 style="font-size: 56px; line-height: 1.08; margin: 0 0 22px; font-weight: 800; letter-spacing: -0.01em; color: #3E3E3C; text-wrap: balance;">Реч, хранене и <span style="color: #6E9585;">развитие</span> — с грижа за всяко дете</h1>
         <p style="font-size: 19px; line-height: 1.6; color: #6E6E66; margin: 0 0 32px; max-width: 460px;">Логопед Петя Железова. Езикова и речева терапия, хранителна и миофункционална терапия за деца и възрастни.</p>
         <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
-          <a href="#contact" style="background: #6E9585; color: #fff; padding: 15px 32px; border-radius: 999px; font-size: 16px; font-weight: 600;">Запази консултация</a>
+          <a href="#contact" data-cta="hero" style="background: #6E9585; color: #fff; padding: 15px 32px; border-radius: 999px; font-size: 16px; font-weight: 600;">Запази консултация</a>
           <a href="#services" style="color: #5D5D57; font-weight: 600; font-size: 16px; border-bottom: 2px solid #F0A08B; padding-bottom: 3px;">Виж услугите</a>
         </div>
       </div>
@@ -561,6 +567,52 @@
       }
     }
     tryInit();
+  })();
+
+  // ---- GA4: phone-call conversion tracking ----
+  (function () {
+    var links = document.querySelectorAll('a[href^="tel:"]');
+    Array.prototype.forEach.call(links, function (a) {
+      a.addEventListener("click", function () {
+        if (typeof gtag !== "function") return;
+        gtag("event", "phone_call", {
+          event_category: "engagement",
+          event_label: a.getAttribute("href").replace("tel:", ""),
+          call_source: a.getAttribute("data-call") || "contact-section",
+          transport_type: "beacon"
+        });
+      });
+    });
+  })();
+
+  // ---- GA4: "Запази час" booking-intent tracking ----
+  (function () {
+    var ctas = document.querySelectorAll("[data-cta]");
+    Array.prototype.forEach.call(ctas, function (a) {
+      a.addEventListener("click", function () {
+        if (typeof gtag !== "function") return;
+        gtag("event", "book_click", {
+          event_category: "engagement",
+          event_label: (a.textContent || "").trim(),
+          cta_source: a.getAttribute("data-cta")
+        });
+      });
+    });
+  })();
+
+  // ---- GA4: Calendly booking completed (real conversion) ----
+  (function () {
+    window.addEventListener("message", function (e) {
+      if (!e.data || typeof e.data.event !== "string") return;
+      if (e.data.event.indexOf("calendly") !== 0) return;
+      if (typeof gtag !== "function") return;
+      if (e.data.event === "calendly.event_scheduled") {
+        gtag("event", "booking_completed", {
+          event_category: "conversion",
+          event_label: "Calendly"
+        });
+      }
+    });
   })();
 </script>
 </body>
