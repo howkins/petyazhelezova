@@ -20,7 +20,7 @@
 <meta name="keywords" content="логопед София, логопед, речева терапия, езикова терапия, хранителна терапия, миофункционална терапия, Solid Starts Pro, афазия, забавено речево развитие, детски логопед, Петя Железова">
 <meta name="author" content="Петя Железова">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#6E9585">
+<meta name="theme-color" content="#E07A3F">
 <meta name="geo.region" content="BG-22">
 <meta name="geo.placename" content="София">
 <meta name="geo.position" content="42.6932816;23.3644782">
@@ -121,6 +121,22 @@
   a:hover { opacity: 0.75; }
   section[id] { scroll-margin-top: 96px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  /* ---- Halloween decorations ---- */
+  @keyframes batfloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-9px) rotate(4deg); } }
+  @keyframes ghostbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes flicker { 0%,100% { opacity: 1; } 45% { opacity: 0.88; } 55% { opacity: 0.97; } }
+  @keyframes drift { 0% { transform: translate(0,0) rotate(0deg); } 33% { transform: translate(6px,-8px) rotate(6deg); } 66% { transform: translate(-5px,-4px) rotate(-5deg); } 100% { transform: translate(0,0) rotate(0deg); } }
+  @keyframes swing { 0%,100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+  .bat { animation: batfloat 4.5s ease-in-out infinite; }
+  .ghost { animation: ghostbob 3.6s ease-in-out infinite; }
+  .flicker { animation: flicker 3s ease-in-out infinite; }
+  .drift { animation: drift 9s ease-in-out infinite; }
+  .spider { transform-origin: top center; animation: swing 4.2s ease-in-out infinite; }
+  .card-hov { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s; }
+  .card-hov:hover { transform: translateY(-6px) rotate(-0.8deg); box-shadow: 0 18px 44px rgba(90,50,30,0.14) !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .bat, .ghost, .flicker, .drift, .spider, .book-cta { animation: none !important; }
+  }
   @keyframes heartbeat {
     0%, 100% { transform: scale(1); box-shadow: 0 6px 18px rgba(240,160,139,0.32); }
     12% { transform: scale(1.09); box-shadow: 0 8px 24px rgba(240,160,139,0.5); }
@@ -146,7 +162,7 @@
     .resp-container { padding-left: 22px !important; padding-right: 22px !important; }
     .resp-hero { grid-template-columns: 1fr !important; gap: 8px !important; padding: 40px 0 52px !important; }
     .resp-hero-media { order: -1; max-width: 340px; margin: 0 auto 8px; }
-    .hero-blob { display: none !important; }
+    .hero-blob, .hero-deco { display: none !important; }
     .resp-hero h1 { font-size: 40px !important; }
     .resp-about { grid-template-columns: 1fr !important; gap: 44px !important; padding: 48px 0 !important; }
     .resp-about-media { max-width: 360px; margin: 0 auto; }
@@ -168,10 +184,17 @@
 <body>
 <div style="width: 100%; overflow-x: clip;">
 
+  <!-- ===== HALLOWEEN ANNOUNCEMENT BAR ===== -->
+  <div style="background: linear-gradient(90deg, #3E2D48 0%, #5A3F56 50%, #3E2D48 100%); color: #F6E9DA; font-size: 14px; font-weight: 500; text-align: center; padding: 10px 20px; letter-spacing: 0.01em; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+    <span class="flicker">🎃</span>
+    <span>Честит Хелоуин! През октомври сесиите са с малко повече игра, приказки и тиквени истории.</span>
+    <span class="flicker" style="animation-delay: 1.1s;">🕯️</span>
+  </div>
+
   <!-- ===== NAV ===== -->
   <nav style="position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #EFE9E1;">
     <div style="max-width: 1180px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 12px 40px;">
-      <a href="#top" style="display: flex; align-items: center;"><img src="./assets/logo.png" alt="Логопед Петя Железова" style="height: 50px; width: auto;"></a>
+      <a href="#top" style="display: flex; align-items: center; position: relative;"><img src="./assets/logo.png" alt="Логопед Петя Железова" style="height: 50px; width: auto;"><span class="bat" style="position: absolute; top: -4px; right: -16px; font-size: 14px; opacity: 0.55;">🦇</span></a>
       <div class="nav-links" style="display: flex; gap: 24px; align-items: center; font-size: 15px;">
         <div id="navGroup" style="position: relative; display: flex; gap: 4px; align-items: center;">
           <div id="navPill" style="position: absolute; top: 50%; left: 0; width: 0; height: 38px; transform: translateY(-50%); background: #EAF1EC; border-radius: 999px; opacity: 0; transition: left 0.45s cubic-bezier(0.4,0,0.2,1), width 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s; z-index: 0;"></div>
@@ -182,11 +205,11 @@
           <a href="#contact" class="nav-a" data-nav="contact">Контакти</a>
         </div>
         <a href="tel:+359899140742" class="nav-tel" data-call="nav-desktop" style="display: inline-flex; align-items: center; gap: 8px; color: #6E9585; border: 1.5px solid #6E9585; padding: 9px 18px; border-radius: 999px; font-weight: 600; transition: background 0.3s, color 0.3s;">📞 +359 89 914 0742</a>
-        <a href="#contact" class="book-cta" data-cta="nav-desktop" style="background: #F0A08B; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600;">Запази час</a>
+        <a href="#contact" class="book-cta" data-cta="nav-desktop" style="background: #E07A3F; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600;">🎃 Запази час</a>
       </div>
       <div class="nav-mobile-actions" style="display: none; align-items: center; gap: 10px;">
         <a href="tel:+359899140742" class="nav-tel-mobile" data-call="nav-mobile" aria-label="Обади се" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #6E9585; color: #fff; font-size: 19px;">📞</a>
-        <a href="#contact" class="book-cta nav-cta-mobile" data-cta="nav-mobile" style="background: #F0A08B; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600; display: none;">Запази час</a>
+        <a href="#contact" class="book-cta nav-cta-mobile" data-cta="nav-mobile" style="background: #E07A3F; color: #fff; padding: 11px 22px; border-radius: 999px; font-weight: 600; display: none;">🎃 Запази час</a>
       </div>
     </div>
   </nav>
@@ -196,13 +219,15 @@
     <!-- ===== HERO ===== -->
     <section class="resp-hero" style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; padding: 72px 0 84px; align-items: center; position: relative;">
       <div class="hero-blob" style="position: absolute; top: 10px; right: 340px; width: 220px; height: 220px; background: #DDEAE2; border-radius: 50%; z-index: 0;"></div>
+      <div class="bat hero-deco" style="position: absolute; top: 4px; right: 210px; font-size: 22px; opacity: 0.5; z-index: 1;">🦇</div>
+      <div class="bat hero-deco" style="position: absolute; top: 74px; right: 128px; font-size: 15px; opacity: 0.35; z-index: 1; animation-delay: 1.2s;">🦇</div>
       <div style="position: relative; z-index: 2;">
-        <div style="display: inline-flex; align-items: center; gap: 8px; background: #EAF1EC; color: #5E8676; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; margin-bottom: 24px;">🌱 10 години професионален опит</div>
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: #F7E7D7; color: #9A5A2A; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; margin-bottom: 24px;">🎃 10 години професионален опит</div>
         <h1 style="font-size: 56px; line-height: 1.08; margin: 0 0 22px; font-weight: 800; letter-spacing: -0.01em; color: #3E3E3C; text-wrap: balance;">Реч, хранене и <span style="color: #6E9585;">развитие</span> — с грижа за всяко дете</h1>
         <p style="font-size: 19px; line-height: 1.6; color: #6E6E66; margin: 0 0 32px; max-width: 460px;">Логопед Петя Железова. Езикова и речева терапия, хранителна и миофункционална терапия за деца и възрастни.</p>
         <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
           <a href="#contact" data-cta="hero" style="background: #6E9585; color: #fff; padding: 15px 32px; border-radius: 999px; font-size: 16px; font-weight: 600;">Запази консултация</a>
-          <a href="#services" style="color: #5D5D57; font-weight: 600; font-size: 16px; border-bottom: 2px solid #F0A08B; padding-bottom: 3px;">Виж услугите</a>
+          <a href="#services" style="color: #5D5D57; font-weight: 600; font-size: 16px; border-bottom: 2px solid #E07A3F; padding-bottom: 3px;">Виж услугите 🕯️</a>
         </div>
       </div>
       <div class="resp-hero-media" style="position: relative; z-index: 2;">
@@ -211,7 +236,7 @@
           <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(110,149,133,0.12) 0%, rgba(110,149,133,0) 40%, rgba(240,160,139,0.12) 100%); mix-blend-mode: multiply;"></div>
         </div>
         <div style="position: absolute; bottom: 34px; left: -28px; background: #fff; border-radius: 18px; padding: 14px 18px; box-shadow: 0 14px 34px rgba(60,50,40,0.12); display: flex; align-items: center; gap: 12px;">
-          <span style="width: 42px; height: 42px; border-radius: 12px; background: #FCE3DB; display: flex; align-items: center; justify-content: center; font-size: 20px;">💬</span>
+          <span class="ghost" style="width: 42px; height: 42px; border-radius: 12px; background: #F7E7D7; display: flex; align-items: center; justify-content: center; font-size: 20px;">👻</span>
           <div><div style="font-weight: 700; font-size: 15px;">200+ семейства</div><div style="font-size: 12px; color: #8A8A82;">с реален напредък</div></div>
         </div>
       </div>
@@ -245,39 +270,42 @@
     </section>
 
     <!-- ===== SERVICES ===== -->
-    <section id="services" style="padding: 72px 0 48px;">
+    <section id="services" style="padding: 72px 0 48px; position: relative;">
+      <div class="drift" style="position: absolute; top: 30px; left: -6px; font-size: 20px; opacity: 0.28; pointer-events: none;">🍬</div>
+      <div class="drift" style="position: absolute; top: 120px; right: 0; font-size: 18px; opacity: 0.24; pointer-events: none; animation-delay: 2.4s;">🍭</div>
       <div style="text-align: center; max-width: 640px; margin: 0 auto 44px;">
         <div style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #9CBCAC; font-weight: 700; margin-bottom: 14px;">Услуги</div>
         <h2 class="sec-h2" style="font-size: 40px; line-height: 1.15; margin: 0 0 14px; font-weight: 700; color: #3E3E3C;">С какво мога да помогна</h2>
+        <p style="font-size: 15px; color: #9A5A2A; margin: 0 0 10px; font-weight: 600;">🕸️ Никакви магии — само доказани методи и много игра.</p>
         <p style="font-size: 17px; line-height: 1.6; color: #77776F; margin: 0;">Индивидуални програми, съобразени с нуждите на всеки клиент — от първите думи до уверената реч и здравословното хранене.</p>
       </div>
       <div class="resp-grid-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;">
-        <div style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
+        <div class="card-hov" style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
           <div style="width: 52px; height: 52px; border-radius: 15px; background: #EAF1EC; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px;">🗣️</div>
           <div style="font-weight: 700; font-size: 19px; margin-bottom: 10px; color: #3E3E3C;">Логопедия</div>
           <div style="font-size: 15px; color: #77776F; line-height: 1.6;">Диагностика и терапия при нарушения на артикулацията и говора при деца и възрастни.</div>
         </div>
-        <div style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
+        <div class="card-hov" style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
           <div style="width: 52px; height: 52px; border-radius: 15px; background: #FCE3DB; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px;">📚</div>
           <div style="font-weight: 700; font-size: 19px; margin-bottom: 10px; color: #3E3E3C;">Езикова терапия</div>
           <div style="font-size: 15px; color: #77776F; line-height: 1.6;">Работа при забавено речево развитие, обогатяване на речника и граматиката.</div>
         </div>
-        <div style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
+        <div class="card-hov" style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
           <div style="width: 52px; height: 52px; border-radius: 15px; background: #EAF1EC; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px;">🥄</div>
           <div style="font-weight: 700; font-size: 19px; margin-bottom: 10px; color: #3E3E3C;">Хранителна терапия</div>
           <div style="font-size: 15px; color: #77776F; line-height: 1.6;">Подкрепа при трудности с храненето по метода Solid Starts Pro.</div>
         </div>
-        <div style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
+        <div class="card-hov" style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
           <div style="width: 52px; height: 52px; border-radius: 15px; background: #FCE3DB; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px;">👄</div>
           <div style="font-weight: 700; font-size: 19px; margin-bottom: 10px; color: #3E3E3C;">Миофункционална терапия</div>
           <div style="font-size: 15px; color: #77776F; line-height: 1.6;">Орофациална миофункционална терапия за правилно преглъщане и мускулен тонус.</div>
         </div>
-        <div style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
+        <div class="card-hov" style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
           <div style="width: 52px; height: 52px; border-radius: 15px; background: #EAF1EC; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px;">💬</div>
           <div style="font-weight: 700; font-size: 19px; margin-bottom: 10px; color: #3E3E3C;">Афазия</div>
           <div style="font-size: 15px; color: #77776F; line-height: 1.6;">Възстановяване на речта при възрастни след инсулт или мозъчна травма.</div>
         </div>
-        <div style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
+        <div class="card-hov" style="background: #fff; border-radius: 22px; padding: 30px; box-shadow: 0 10px 30px rgba(60,50,40,0.06);">
           <div style="width: 52px; height: 52px; border-radius: 15px; background: #FCE3DB; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px;">🌱</div>
           <div style="font-weight: 700; font-size: 19px; margin-bottom: 10px; color: #3E3E3C;">Ранно развитие</div>
           <div style="font-size: 15px; color: #77776F; line-height: 1.6;">Стимулиране на комуникацията и развитието в най-ранна детска възраст.</div>
@@ -287,7 +315,12 @@
 
     <!-- ===== EXPERIENCE ===== -->
     <section id="experience" style="padding: 64px 0;">
-      <div class="resp-exp-card" style="background: #fff; border-radius: 32px; padding: 56px; box-shadow: 0 14px 40px rgba(60,50,40,0.06);">
+      <div class="resp-exp-card" style="background: #fff; border-radius: 32px; padding: 56px; box-shadow: 0 14px 40px rgba(60,50,40,0.06); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -6px; right: -6px; font-size: 44px; opacity: 0.12; pointer-events: none;">🕸️</div>
+        <div style="position: absolute; top: 34px; right: 46px; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
+          <div style="width: 1px; height: 22px; background: rgba(62,62,60,0.2);"></div>
+          <div class="spider" style="font-size: 15px; opacity: 0.4;">🕷️</div>
+        </div>
         <div class="resp-exp" style="display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 48px; align-items: start;">
           <div>
             <div style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #9CBCAC; font-weight: 700; margin-bottom: 14px;">Опит</div>
@@ -304,6 +337,7 @@
       <div style="text-align: center; max-width: 620px; margin: 0 auto 44px;">
         <div style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #9CBCAC; font-weight: 700; margin-bottom: 14px;">Отзиви</div>
         <h2 class="sec-h2" style="font-size: 40px; line-height: 1.15; margin: 0 0 14px; font-weight: 700; color: #3E3E3C;">Какво казват родителите</h2>
+        <p style="font-size: 15px; color: #9A5A2A; margin: 0; font-weight: 500;">👻 Без страшни истории — само истински напредък.</p>
       </div>
       <div class="resp-rev-wrap" style="position: relative; max-width: 760px; margin: 0 auto; padding: 10px 0; display: flex; gap: 20px; align-items: stretch;">
         <div class="rev-viewport">
@@ -316,11 +350,13 @@
   </div>
 
   <!-- ===== CONTACT ===== -->
-  <section id="contact" style="background: #EAF1EC; margin-top: 48px;">
+  <section id="contact" style="background: #EAF1EC; margin-top: 48px; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: 10px; left: 14px; font-size: 30px; opacity: 0.16; pointer-events: none;">🕸️</div>
+    <div class="bat" style="position: absolute; top: 26px; right: 26px; font-size: 18px; opacity: 0.3; pointer-events: none;">🦇</div>
     <div class="resp-contact" style="max-width: 1180px; margin: 0 auto; padding: 76px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start;">
       <div>
         <div style="font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: #6E9585; font-weight: 700; margin-bottom: 14px;">Контакти</div>
-        <h2 class="sec-h2" style="font-size: 40px; line-height: 1.14; margin: 0 0 18px; font-weight: 800; color: #3E3E3C;">Да запишем първата среща</h2>
+        <h2 class="sec-h2" style="font-size: 40px; line-height: 1.14; margin: 0 0 18px; font-weight: 800; color: #3E3E3C;">Да запишем първата среща 🎃</h2>
         <p style="font-size: 17px; line-height: 1.65; color: #5B6B62; margin: 0 0 34px; max-width: 420px;">Изберете удобен ден и час от календара и запазете часа си за консултация за миг. Ще получите потвърждение на имейл.</p>
         <div style="background: #fff; border-radius: 26px; padding: 20px; box-shadow: 0 18px 50px rgba(60,50,40,0.1); overflow: hidden;">
           <div id="calEl" style="position: relative; min-width: 320px; height: 700px; border-radius: 14px; overflow: hidden;">
@@ -360,13 +396,13 @@
   </section>
 
   <!-- ===== FOOTER ===== -->
-  <footer style="background: #3E4844; color: #DDE6E1;">
+  <footer style="background: #3E2D48; color: #E8DCE6;">
     <div style="max-width: 1180px; margin: 0 auto; padding: 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
       <div style="display: flex; align-items: center; gap: 14px;">
         <div style="background: #fff; border-radius: 12px; padding: 8px 10px; display: flex;"><img src="./assets/logo-footer.png" alt="Логопед" style="height: 40px; width: auto;"></div>
-        <div style="font-weight: 700; font-size: 16px; color: #fff;">Логопед Петя Железова</div>
+        <div style="font-weight: 700; font-size: 16px; color: #fff;">Логопед Петя Железова <span class="ghost" style="display: inline-block; margin-left: 4px; opacity: 0.8;">🎃</span></div>
       </div>
-      <div style="font-size: 14px; color: #A7B5AE;">© 2026 · Всички права запазени</div>
+      <div style="font-size: 14px; color: #B9A6BC;">© 2026 · Всички права запазени · <span class="flicker">Бу! 👻</span></div>
     </div>
   </footer>
 
